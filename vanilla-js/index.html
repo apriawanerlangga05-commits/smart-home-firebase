@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Home IoT Dashboard - Monitoring & Kontrol</title>
+    <!-- Menautkan stylesheet eksternal style.css -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- 1. PRELOADER LOADING ANIMATION -->
+    <div id="preloader" class="preloader">
+        <div class="spinner"></div>
+        <p style="margin-top: 15px; color: var(--text-secondary); font-family: 'Inter', sans-serif; font-size: 0.9rem; letter-spacing: 0.05em;">
+            MENGHUBUNGKAN KE SERVER IOT...
+        </p>
+    </div>
+
+    <!-- 2. NOTIFIKASI TOAST (SENSITIF STATE RELAY) -->
+    <div id="toast-notif" class="notification-toast">
+        <!-- Icon info dari SVG -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-cyan)"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        <span id="toast-msg">Lampu berhasil diperbarui!</span>
+    </div>
+
+    <!-- MAIN CONTAINER -->
+    <div class="dashboard-container">
+        
+        <!-- HEADER DASHBOARD -->
+        <header>
+            <div class="header-brand">
+                <h1>
+                    <!-- Icon Smart Home (SVG) -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-cyan)"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                    Smart Home IoT
+                </h1>
+                <p>Dashboard Monitoring & Kontrol berbasis Firebase Realtime Database</p>
+            </div>
+            
+            <div class="system-status">
+                <!-- Status Koneksi Firebase -->
+                <div class="conn-indicator">
+                    <span id="conn-dot" class="status-dot"></span>
+                    <span id="conn-text">MENGHUBUNGKAN...</span>
+                </div>
+                <!-- Waktu Realtime Client -->
+                <div class="realtime-clock">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <span id="time-string">00:00:00 WIB</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- LAYOUT GRID UTAMA -->
+        <div class="grid-container">
+            
+            <!-- ====== 1. DASHBOARD MONITORING SENSOR ====== -->
+            <div class="monitoring-section">
+                
+                <!-- Card Suhu -->
+                <div class="dashboard-card sensor-card temp-card">
+                    <div class="sensor-header">
+                        <span>SUHU REALTIME</span>
+                        <div class="sensor-icon-wrapper">
+                            <!-- Icon Termometer (SVG) -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>
+                        </div>
+                    </div>
+                    <div class="sensor-body">
+                        <span id="temp-value" class="sensor-value">--</span>
+                        <span class="sensor-unit">°C</span>
+                    </div>
+                </div>
+
+                <!-- Card Kelembaban -->
+                <div class="dashboard-card sensor-card hum-card">
+                    <div class="sensor-header">
+                        <span>KELEMBABAN REALTIME</span>
+                        <div class="sensor-icon-wrapper">
+                            <!-- Icon Droplet (SVG) -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+                        </div>
+                    </div>
+                    <div class="sensor-body">
+                        <span id="hum-value" class="sensor-value">--</span>
+                        <span class="sensor-unit">% RH</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ====== 2. KONTROL RELAY / SAKLAR LAMPU ====== -->
+            <div class="dashboard-card relay-section">
+                <div class="section-head">
+                    <h3 class="section-title">Kontrol Aktuator Relay</h3>
+                    <span class="relay-status-pill" style="background: rgba(6, 182, 212, 0.1); color: var(--accent-cyan);">4 Saklar Relay</span>
+                </div>
+
+                <!-- Grid 4 Relay -->
+                <div class="relay-grid">
+                    
+                    <!-- Relay 1 (Lampu Teras) -->
+                    <div id="relay-item-1" class="relay-item">
+                        <div class="relay-item-header">
+                            <div class="relay-info">
+                                <h4>Lampu Teras (Relay 1)</h4>
+                                <span id="status-text-1">Status: OFF</span>
+                            </div>
+                            <!-- Icon Bohlam (SVG) -->
+                            <svg class="bulb-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A5 5 0 0 0 8 8c0 1 .5 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><line x1="9" y1="18" x2="15" y2="18"/><line x1="10" y1="22" x2="14" y2="22"/></svg>
+                        </div>
+                        <div class="relay-controls">
+                            <button id="btn-on-1" class="control-btn btn-on">ON</button>
+                            <button id="btn-off-1" class="control-btn btn-off active">OFF</button>
+                        </div>
+                    </div>
+
+                    <!-- Relay 2 (Lampu Keluarga) -->
+                    <div id="relay-item-2" class="relay-item">
+                        <div class="relay-item-header">
+                            <div class="relay-info">
+                                <h4>Lampu Keluarga (Relay 2)</h4>
+                                <span id="status-text-2">Status: OFF</span>
+                            </div>
+                            <svg class="bulb-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A5 5 0 0 0 8 8c0 1 .5 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><line x1="9" y1="18" x2="15" y2="18"/><line x1="10" y1="22" x2="14" y2="22"/></svg>
+                        </div>
+                        <div class="relay-controls">
+                            <button id="btn-on-2" class="control-btn btn-on">ON</button>
+                            <button id="btn-off-2" class="control-btn btn-off active">OFF</button>
+                        </div>
+                    </div>
+
+                    <!-- Relay 3 (Lampu Utama) -->
+                    <div id="relay-item-3" class="relay-item">
+                        <div class="relay-item-header">
+                            <div class="relay-info">
+                                <h4>Lampu Kamar (Relay 3)</h4>
+                                <span id="status-text-3">Status: OFF</span>
+                            </div>
+                            <svg class="bulb-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A5 5 0 0 0 8 8c0 1 .5 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><line x1="9" y1="18" x2="15" y2="18"/><line x1="10" y1="22" x2="14" y2="22"/></svg>
+                        </div>
+                        <div class="relay-controls">
+                            <button id="btn-on-3" class="control-btn btn-on">ON</button>
+                            <button id="btn-off-3" class="control-btn btn-off active">OFF</button>
+                        </div>
+                    </div>
+
+                    <!-- Relay 4 (Pompa Air / Sanyo) -->
+                    <div id="relay-item-4" class="relay-item">
+                        <div class="relay-item-header">
+                            <div class="relay-info">
+                                <h4>Sanyo Pompa (Relay 4)</h4>
+                                <span id="status-text-4">Status: OFF</span>
+                            </div>
+                            <svg class="bulb-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A5 5 0 0 0 8 8c0 1 .5 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><line x1="9" y1="18" x2="15" y2="18"/><line x1="10" y1="22" x2="14" y2="22"/></svg>
+                        </div>
+                        <div class="relay-controls">
+                            <button id="btn-on-4" class="control-btn btn-on">ON</button>
+                            <button id="btn-off-4" class="control-btn btn-off active">OFF</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- ====== 3. VOICE COMMAND (WEB SPEECH API) ====== -->
+            <div class="dashboard-card voice-section">
+                <div class="voice-container">
+                    
+                    <!-- Tombol Mic Interaktif -->
+                    <div id="mic-wrapper" class="mic-wrapper">
+                        <div class="pulse-ring"></div>
+                        <button class="mic-btn">
+                            <!-- Icon Mic (SVG) -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+                        </button>
+                    </div>
+
+                    <!-- Teks Hasil Suara -->
+                    <div class="voice-display">
+                        <h3>Kontrol Suara AI (Voice Command)</h3>
+                        <div class="transcript-box">
+                            <span id="transcript-text" class="transcript-text">Klik ikon mikrofon untuk berbicara perintah suara...</span>
+                        </div>
+                        <div class="voice-hint">
+                            <span>💡 Perintah: "Nyalakan lampu 1"</span>
+                            <span>💡 "Matikan lampu 2"</span>
+                            <span>💡 "Nyalakan semua lampu"</span>
+                            <span>💡 "Matikan semua lampu"</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- ====== 4. SIMULATOR SENSOR (SLIDER) ====== -->
+            <div class="dashboard-card simulator-section">
+                <div class="section-head" style="margin-bottom: 10px;">
+                    <h3 class="section-title" style="color: var(--accent-cyan)">Simulator Penguji Sensor IoT</h3>
+                    <span class="relay-status-pill" style="background: rgba(16, 185, 129, 0.1); color: var(--accent-emerald);">Mode Simulasi Aktif</span>
+                </div>
+                <p style="font-size: 0.8rem; color: var(--text-secondary);">
+                    Geser slider untuk mensimulasikan data suhu dan kelembaban tanpa perangkat keras ESP32. Perubahan akan langsung disinkronkan ke Firebase dan dialirkan kembali ke monitor realtime di atas.
+                </p>
+
+                <div class="simulator-controls">
+                    <!-- Slider Temperatur -->
+                    <div class="control-group">
+                        <label>
+                            <span>Simulasi Suhu Udara</span>
+                            <span><b id="slider-temp-val">28</b> °C</span>
+                        </label>
+                        <input type="range" id="slider-temp" min="0" max="60" value="28">
+                    </div>
+
+                    <!-- Slider Kelembaban -->
+                    <div class="control-group">
+                        <label>
+                            <span>Simulasi Kelembaban</span>
+                            <span><b id="slider-hum-val">65</b> % RH</span>
+                        </label>
+                        <input type="range" id="slider-hum" min="10" max="100" value="65">
+                    </div>
+                </div>
+            </div>
+
+            <!-- ====== 5. CONSOLE LOGS AKTIVITAS IOT ====== -->
+            <div class="dashboard-card logs-section">
+                <div class="section-head" style="margin-bottom: 12px;">
+                    <h3 class="section-title">Log Aktivitas Sistem</h3>
+                    <span class="relay-status-pill" style="background: rgba(255, 255, 255, 0.05);">Daftar Log Aktif</span>
+                </div>
+                <div id="console-box" class="console-box">
+                    <div class="log-line">
+                        <span class="log-time">[SYSTEM]</span>
+                        <span class="log-tag">INITIALIZING:</span>
+                        <span class="log-msg font-semibold">Memuat sistem dashboard IoT...</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- FOOTER -->
+        <footer>
+            <p>Implementasi Pembelajaran IoT & Rekayasa Perangkat Lunak Mahasiswa</p>
+            <p style="margin-top:6px; font-size: 0.75rem; color: rgba(255,255,255,0.25)">
+                Terhubung ke <span style="color: var(--accent-cyan)">smart-home-c7386</span> via Firebase Web SDK v10.12.2
+            </p>
+        </footer>
+
+    </div>
+
+    <!-- Script Utama (Mengaktifkan seluruh backend Firebase dan Voice Input) -->
+    <script type="module" src="script.js"></script>
+</body>
+</html>

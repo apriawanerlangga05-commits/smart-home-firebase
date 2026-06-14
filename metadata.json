@@ -1,0 +1,6 @@
+{
+  "name": "Smart Home IoT Dashboard",
+  "description": "Smart Home IoT Dashboard connected to Firebase Realtime Database with Voice Control",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

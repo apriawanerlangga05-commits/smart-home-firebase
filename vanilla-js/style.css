@@ -1,0 +1,696 @@
+/*
+ * style.css - Styling Sistem Smart Home IoT Dashboard
+ * Desain: Futuristic Dark Mode, Glassmorphism, Glowing Effects, dan Responsive Layout
+ * Sangat cocok untuk materi perkuliahan/proyek mahasiswa IoT.
+ */
+
+/* Mengimpor Google Fonts: Inter untuk teks umum dan JetBrains Mono untuk status/data */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+/* Reset dasar & Variabel Global */
+:root {
+    --bg-gradient-start: #0a0d16;
+    --bg-gradient-end: #121625;
+    --card-bg: rgba(22, 28, 45, 0.45);
+    --card-border: rgba(255, 255, 255, 0.06);
+    --text-primary: #f3f4f6;
+    --text-secondary: #9ca3af;
+    --accent-blue: #3b82f6;
+    --accent-cyan: #06b6d4;
+    --accent-emerald: #10b981;
+    --accent-red: #ef4444;
+    --font-main: 'Inter', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+    --glow-shadow-emerald: 0 0 15px rgba(16, 185, 129, 0.4);
+    --glow-shadow-cyan: 0 0 15px rgba(6, 182, 212, 0.4);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-main);
+    background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+}
+
+/* Animasi Bintang/Partikel Latar Belakang Halus */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 40px),
+        radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 30px);
+    background-size: 550px 550px, 350px 350px;
+    background-position: 0 0, 40px 60px;
+    opacity: 0.04;
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* Loader saat web pertama kali dibuka */
+.preloader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #0a0d16;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    transition: opacity 0.5s ease;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 3px solid rgba(6, 182, 212, 0.1);
+    border-radius: 50%;
+    border-top-color: var(--accent-cyan);
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Container utama dashboard */
+.dashboard-container {
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 20px;
+    flex: 1;
+}
+
+/* Header Dashboard */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--card-border);
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.header-brand h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    background: linear-gradient(to right, #ffffff, #9ca3af);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.header-brand p {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    margin-top: 4px;
+}
+
+.system-status {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+/* Indikator Firebase */
+.conn-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.04);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-family: var(--font-mono);
+    border: 1px solid var(--card-border);
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--accent-red);
+}
+
+.status-dot.connected {
+    background-color: var(--accent-emerald);
+    box-shadow: 0 0 8px var(--accent-emerald);
+}
+
+/* Realtime Clock */
+.realtime-clock {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(6, 182, 212, 0.08);
+    color: var(--accent-cyan);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    font-weight: 500;
+    border: 1px solid rgba(6, 182, 212, 0.15);
+}
+
+/* Notifikasi Log Mengambang */
+.notification-toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #111827;
+    border-left: 4px solid var(--accent-cyan);
+    color: var(--text-primary);
+    padding: 12px 20px;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px -5px rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transform: translateY(150%);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 1000;
+}
+
+.notification-toast.show {
+    transform: translateY(0);
+}
+
+/* Layout Grid Dashboard */
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 20px;
+}
+
+/* Sub-card styling */
+.dashboard-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    padding: 24px;
+    backdrop-filter: blur(8px);
+    transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(255, 255, 255, 0.12);
+}
+
+/* 1. Dashboard Monitoring (Suhu & Kelembaban) */
+.monitoring-section {
+    grid-column: span 5;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.sensor-card {
+    background: linear-gradient(145deg, rgba(22, 28, 45, 0.6), rgba(15, 19, 32, 0.6));
+    border: 1px solid var(--card-border);
+    position: relative;
+    overflow: hidden;
+}
+
+.sensor-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+}
+
+.temp-card::after {
+    background: linear-gradient(to bottom, #f97316, #ef4444);
+}
+
+.hum-card::after {
+    background: linear-gradient(to bottom, #3b82f6, #06b6d4);
+}
+
+.sensor-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.sensor-icon-wrapper {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.temp-card .sensor-icon-wrapper {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+.hum-card .sensor-icon-wrapper {
+    background: rgba(6, 182, 212, 0.1);
+    color: #06b6d4;
+}
+
+.sensor-body {
+    margin-top: 15px;
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+}
+
+.sensor-value {
+    font-size: 2.5rem;
+    font-family: var(--font-mono);
+    font-weight: 700;
+}
+
+.sensor-unit {
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+}
+
+/* 2. Kontrol Relay (Grid 4 Relay dalam 1 Card Besar) */
+.relay-section {
+    grid-column: span 7;
+}
+
+.section-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.section-title {
+    font-size: 1.15rem;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    color: #ffffff;
+}
+
+.relay-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+.relay-item {
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 140px;
+    transition: all 0.25s ease;
+}
+
+.relay-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.relay-info h4 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.relay-info span {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+/* Lampu Bulat SVG Glow Effect */
+.bulb-icon {
+    width: 32px;
+    height: 32px;
+    color: var(--text-secondary);
+    transition: all 0.3s ease;
+}
+
+/* Modifikasi ketika status relay ON */
+.relay-item.active {
+    background: rgba(6, 182, 212, 0.05);
+    border-color: rgba(6, 182, 212, 0.3);
+    box-shadow: 0 4px 20px -2px rgba(6, 182, 212, 0.15);
+}
+
+.relay-item.active .bulb-icon {
+    color: #eab308;
+    filter: drop-shadow(0 0 8px rgba(234, 179, 8, 0.7));
+}
+
+.relay-status-pill {
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-family: var(--font-mono);
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.relay-item.active .relay-status-pill {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10b981;
+}
+
+/* Tombol Kontrol Dual ON/OFF */
+.relay-controls {
+    display: flex;
+    gap: 8px;
+    margin-top: 15px;
+}
+
+.control-btn {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--text-secondary);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.2s ease;
+}
+
+.control-btn:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.control-btn.btn-on.active {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    border-color: transparent;
+    box-shadow: var(--glow-shadow-emerald);
+}
+
+.control-btn.btn-off.active {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+    border-color: transparent;
+}
+
+/* 3. Voice Control Panel (Web Speech API) */
+.voice-section {
+    grid-column: span 12;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: radial-gradient(circle at top right, rgba(6, 182, 212, 0.07), transparent 60%), var(--card-bg);
+}
+
+.voice-container {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    width: 100%;
+}
+
+.mic-wrapper {
+    flex-shrink: 0;
+    position: relative;
+    cursor: pointer;
+}
+
+.mic-btn {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #06b6d4, #0891b2);
+    border: none;
+    outline: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: var(--glow-shadow-cyan);
+    z-index: 2;
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.mic-btn:hover {
+    transform: scale(1.04);
+}
+
+.mic-btn:active {
+    transform: scale(0.96);
+}
+
+.mic-wrapper.listening .mic-btn {
+    background: linear-gradient(135deg, #f43f5e, #e11d48);
+    box-shadow: 0 0 20px rgba(225, 29, 72, 0.6);
+}
+
+/* Gelombang Radar Pulsa Pengenalan Suara */
+.pulse-ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: rgba(6, 182, 212, 0.3);
+    pointer-events: none;
+    z-index: 1;
+}
+
+.mic-wrapper.listening .pulse-ring {
+    animation: pulseMic 1.5s infinite ease-out;
+    background: rgba(225, 29, 72, 0.3);
+}
+
+@keyframes pulseMic {
+    0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.8;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(1.8);
+        opacity: 0;
+    }
+}
+
+.voice-display {
+    flex: 1;
+}
+
+.voice-display h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.transcript-box {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    padding: 12px 16px;
+    color: var(--text-secondary);
+    min-height: 48px;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+}
+
+.transcript-text.recognized {
+    color: #ffffff;
+    font-weight: 500;
+}
+
+.voice-hint {
+    font-size: 0.75rem;
+    color: var(--accent-cyan);
+    margin-top: 8px;
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.voice-hint span {
+    background: rgba(6, 182, 212, 0.1);
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+/* Logging Aktivitas IoT di Dashboard */
+.logs-section {
+    grid-column: span 12;
+}
+
+.console-box {
+    background: rgba(10, 13, 22, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    padding: 15px;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    max-height: 180px;
+    overflow-y: auto;
+}
+
+.console-box::-webkit-scrollbar {
+    width: 6px;
+}
+
+.console-box::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.1);
+    border-radius: 3px;
+}
+
+.log-line {
+    margin-bottom: 8px;
+    display: flex;
+    gap: 10px;
+    color: var(--text-secondary);
+}
+
+.log-time {
+    color: var(--accent-cyan);
+}
+
+.log-tag {
+    color: var(--text-primary);
+    font-weight: bold;
+}
+
+.log-msg.success { color: var(--accent-emerald); }
+.log-msg.error { color: var(--accent-red); }
+.log-msg.info { color: #f59e0b; }
+
+/* Simulator Sensor (Khusus untuk Pengujian Mahasiswa Tanpa Perangkat ESP32 Fisik) */
+.simulator-section {
+    grid-column: span 12;
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.3) 0%, rgba(15, 23, 42, 0.2) 100%);
+    border: 1px solid rgba(6, 182, 212, 0.15);
+}
+
+.simulator-controls {
+    display: flex;
+    gap: 30px;
+    align-items: center;
+    margin-top: 15px;
+    flex-wrap: wrap;
+}
+
+.control-group {
+    flex: 1;
+    min-width: 200px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.control-group label {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    display: flex;
+    justify-content: space-between;
+}
+
+.control-group input[type="range"] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    outline: none;
+}
+
+.control-group input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--accent-cyan);
+    cursor: pointer;
+    box-shadow: var(--glow-shadow-cyan);
+}
+
+/* Footer Aplikasi */
+footer {
+    text-align: center;
+    padding: 30px 20px;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    margin-top: 40px;
+    border-top: 1px solid var(--card-border);
+}
+
+footer a {
+    color: var(--accent-cyan);
+    text-decoration: none;
+}
+
+/* Responsive Grid untuk Tablet & Mobile */
+@media screen and (max-width: 900px) {
+    .monitoring-section {
+        grid-column: span 12;
+        flex-direction: row;
+    }
+    .monitoring-section .sensor-card {
+        flex: 1;
+    }
+    .relay-section {
+        grid-column: span 12;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .monitoring-section {
+        flex-direction: column;
+    }
+    .relay-grid {
+        grid-template-columns: 1fr;
+    }
+    header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .system-status {
+        width: 100%;
+        justify-content: space-between;
+    }
+    .voice-container {
+        flex-direction: column;
+        text-align: center;
+    }
+}
