@@ -163,7 +163,7 @@ export default function AuthScreen({ onAuthSuccess }: AuthScreenProps) {
             transition={{ delay: 0.1, duration: 0.5 }}
             className="text-2xl font-bold text-white tracking-tight"
           >
-            SMART HOME <span className="text-orange-400">IoT</span> SYSTEM
+            ECSMART HOME <span className="text-orange-400">IoT</span> SYSTEM
           </motion.h1>
           <motion.p 
             initial={{ y: -5, opacity: 0 }}
