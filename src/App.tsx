@@ -1149,10 +1149,8 @@ export default function App() {
         {/* ASYMMETRIC BENTO GRID */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           
-          {/* ================= LEFT ZONE (7 COLS) ================= */}
-          <div className="lg:col-span-7 space-y-6">
-            
-            {/* WELCOME HOME PANEL WITH PHOTO AND NAME ONLY */}
+          {/* WELCOME HOME PANEL WITH PHOTO AND NAME ONLY - HERO UPPER SECTION */}
+          <div className="lg:col-span-12">
             <div className="bg-[#130f30]/80 border border-[#251c5a]/60 rounded-[28px] p-6 sm:p-8 shadow-[0_15px_40px_rgba(12,9,31,0.5)] relative overflow-hidden flex flex-col sm:flex-row items-center justify-between gap-6">
               {/* Decorative radial card lights */}
               <div className="absolute top-0 right-0 w-48 h-48 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
@@ -1186,13 +1184,59 @@ export default function App() {
                 <span className="absolute bottom-1 right-1 w-4 h-4 rounded-full bg-emerald-400 border-2 border-[#130f30] shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
               </div>
             </div>
-
           </div>
 
-          {/* ================= RIGHT ZONE (5 COLS) ================= */}
+          {/* ================= LEFT ZONE (5 COLS): SENSORS & VOICE ================= */}
           <div className="lg:col-span-5 space-y-6">
+            {/* CALIBRATED MULTIPURPOSE RADIAL METRICS */}
+            <div className="bg-[#130f30]/80 border border-[#251c5a]/60 rounded-[28px] p-6 shadow-[0_15px_40px_rgba(12,9,31,0.5)] space-y-5">
+              <div className="flex justify-between items-center border-b border-[#251c5a]/50 pb-3">
+                <div>
+                  <h3 className="font-bold text-white text-base tracking-wide flex items-center gap-1.5 capitalize">temperature</h3>
+                  <p className="text-[10px] text-violet-300/40 font-mono">Sensors Readout</p>
+                </div>
+                <span className="text-[9px] bg-purple-500/5 text-purple-300 border border-purple-500/15 px-2.5 py-0.5 rounded-full font-mono font-bold uppercase tracking-wide">CALIBRATED</span>
+              </div>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <SensorDial
+                  title="SUHU RUANGAN"
+                  value={temperature}
+                  unit="°C"
+                  status={temperature > 32 ? "Panas ekstrem" : temperature < 20 ? "Dingin" : "Normal"}
+                  statusColor={temperature > 32 ? "rose" : temperature < 20 ? "sky" : "emerald"}
+                  max={50}
+                  icon={Sun}
+                  gradientId="tempProgressGrad"
+                  gradientColors={{ stop1: "#a78bfa", stop2: "#f97316" }}
+                />
+
+                <SensorDial
+                  title="KELEMBABAN UDARA"
+                  value={humidity}
+                  unit="% RH"
+                  status={humidity > 80 ? "Sangat Lembab" : humidity < 40 ? "Kering" : "Ideal"}
+                  statusColor={humidity > 80 ? "blue" : humidity < 40 ? "amber" : "teal"}
+                  max={100}
+                  icon={Droplet}
+                  gradientId="humProgressGrad"
+                  gradientColors={{ stop1: "#a78bfa", stop2: "#a78bfa" }}
+                />
+              </div>
+            </div>
+
+            {/* VOICE COMMAND COMPANION MODULE */}
+            <VoiceVisualizer
+              isListening={isListening}
+              transcript={transcript}
+              toggleSpeechRecognition={toggleSpeechRecognition}
+            />
+          </div>
+
+          {/* ================= RIGHT ZONE (7 COLS): LAMP CONTROLS, SCENARIOS, & LOGS ================= */}
+          <div className="lg:col-span-7 space-y-6">
             
-            {/* ROOMS CONTROLLER CONTAINER */}
+            {/* ROOMS CONTROLLER CONTAINER WITH INTEGRATED QUICK SCENARIOS */}
             <div className="bg-[#130f30]/80 border border-[#251c5a]/60 rounded-[28px] p-6 shadow-[0_15px_40px_rgba(12,9,31,0.5)]">
               <div className="flex justify-between items-center mb-6 border-b border-[#251c5a]/50 pb-3">
                 <div>
@@ -1245,112 +1289,57 @@ export default function App() {
                   onToggle={toggleRelay}
                 />
               </div>
-            </div>
 
-            {/* DYNAMIC SCENARIO SMART SCENES MODULE */}
-            <div className="bg-[#130f30]/80 border border-[#251c5a]/60 rounded-[28px] p-5 sm:p-6 shadow-lg relative overflow-hidden">
-              <div className="flex justify-between items-center mb-4 pb-2 border-b border-[#251c5a]/50">
-                <div>
-                  <h3 className="font-bold text-white text-xs tracking-wide uppercase">Skenario Patroli & Disko</h3>
-                  <p className="text-[9.5px] text-violet-300/40 mt-1 leading-relaxed">Uji respon sinkronisasi berulangan cepat otomatis</p>
+              {/* INTEGRATED: SCENARIO SMART SCENES MODULE */}
+              <div className="border-t border-[#251c5a]/40 mt-6 pt-5">
+                <div className="mb-4">
+                  <h4 className="font-bold text-white text-xs tracking-wide uppercase flex items-center gap-1.5 pb-0.5">
+                    <Sliders className="w-3.5 h-3.5 text-purple-400" />
+                    Skenario Patroli & Disko
+                  </h4>
+                  <p className="text-[9.5px] text-violet-300/40 leading-relaxed">Uji respon sinkronisasi berulangan cepat otomatis</p>
+                </div>
+
+                <div className="grid grid-cols-3 gap-2.5">
+                  <button 
+                    onClick={startMode1}
+                    className={`p-2.5 rounded-xl border text-left cursor-pointer transition-all duration-300 relative overflow-hidden group ${
+                      activeMode === 1 
+                        ? "bg-purple-500/10 border-purple-500/40 text-purple-300 font-extrabold" 
+                        : "bg-[#171141] border-[#251c5a]/60 hover:border-purple-500/30 text-slate-400 font-semibold"
+                    }`}
+                  >
+                    <span className="text-[7px] bg-purple-500/15 text-purple-300 border border-purple-500/30 px-1 py-0.2 rounded font-mono mb-1 inline-block">PATROLI</span>
+                    <h5 className="text-[9.5px] font-bold text-white truncate">1. Patroli</h5>
+                  </button>
+
+                  <button 
+                    onClick={startMode2}
+                    className={`p-2.5 rounded-xl border text-left cursor-pointer transition-all duration-300 relative overflow-hidden group ${
+                      activeMode === 2 
+                        ? "bg-orange-500/10 border-orange-500/40 text-orange-300 font-extrabold" 
+                        : "bg-[#171141] border-[#251c5a]/60 hover:border-orange-500/30 text-slate-400 font-semibold"
+                    }`}
+                  >
+                    <span className="text-[7px] bg-orange-500/15 text-orange-400 border border-orange-500/30 px-1 py-0.2 rounded font-mono mb-1 inline-block">DISKO</span>
+                    <h5 className="text-[9.5px] font-bold text-white truncate">2. Strobe</h5>
+                  </button>
+
+                  <button 
+                    onClick={stopMode}
+                    disabled={activeMode === null}
+                    className={`p-2.5 rounded-xl border text-[#10px] font-bold text-left transition-all duration-300 ${
+                      activeMode === null 
+                        ? "bg-[#130f30]/40 border-slate-900/40 opacity-40 cursor-not-allowed text-stone-500" 
+                        : "bg-rose-500/10 border-rose-500/30 text-rose-300 hover:bg-rose-500/20 cursor-pointer"
+                    }`}
+                  >
+                    <span className="text-[7px] uppercase tracking-wide font-mono mb-1 inline-block text-rose-400">Padamkan</span>
+                    <h5 className="text-[9.5px] font-bold text-white truncate">Hentikan</h5>
+                  </button>
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-2.5">
-                <button 
-                  onClick={startMode1}
-                  className={`p-3 rounded-xl border text-left cursor-pointer transition-all duration-300 relative overflow-hidden group ${
-                    activeMode === 1 
-                      ? "bg-purple-500/10 border-purple-500/40 text-purple-300" 
-                      : "bg-[#171141] border-[#251c5a]/60 hover:border-purple-500/30"
-                  }`}
-                >
-                  <span className="text-[8px] bg-purple-500/15 text-purple-300 border border-purple-500/30 px-1 py-0.2 rounded font-mono mb-1 inline-block">PATROLI</span>
-                  <h4 className="text-[9.5px] font-bold text-white truncate">1. Patroli</h4>
-                </button>
-
-                <button 
-                  onClick={startMode2}
-                  className={`p-3 rounded-xl border text-left cursor-pointer transition-all duration-300 relative overflow-hidden group ${
-                    activeMode === 2 
-                      ? "bg-orange-500/10 border-orange-500/40 text-orange-300" 
-                      : "bg-[#171141] border-[#251c5a]/60 hover:border-orange-500/30"
-                  }`}
-                >
-                  <span className="text-[8px] bg-orange-500/15 text-orange-400 border border-orange-500/30 px-1 py-0.2 rounded font-mono mb-1 inline-block">DISKO</span>
-                  <h4 className="text-[9.5px] font-bold text-white truncate">2. Strobe</h4>
-                </button>
-
-                <button 
-                  onClick={stopMode}
-                  disabled={activeMode === null}
-                  className={`p-3 rounded-xl border text-left transition-all duration-300 ${
-                    activeMode === null 
-                      ? "bg-[#130f30]/40 border-slate-900/40 opacity-40 cursor-not-allowed" 
-                      : "bg-rose-500/10 border-rose-500/30 text-rose-300 hover:bg-rose-500/20 cursor-pointer"
-                  }`}
-                >
-                  <span className="text-[8px] uppercase tracking-wide font-mono mb-1 inline-block text-rose-400">Padamkan</span>
-                  <h4 className="text-[9.5px] font-bold text-white truncate">Hentikan</h4>
-                </button>
-              </div>
-            </div>
-
-          </div>
-
-        </div>
-
-        {/* --- EXPANDABLE ADVANCED CORE MODULES (SENSORS RANGE, VOICE, TELEMETRY) --- */}
-        <div className="mt-8 grid grid-cols-1 md:grid-cols-12 gap-6">
-
-          {/* SENSOR MONITORING & THRESHOLDS PANEL (7 COLS) */}
-          <div className="md:col-span-7 space-y-6">
-            
-            {/* VOICE COMMAND COMPANION MODULE */}
-            <VoiceVisualizer
-              isListening={isListening}
-              transcript={transcript}
-              toggleSpeechRecognition={toggleSpeechRecognition}
-            />
-
-
-
-          </div>
-
-          {/* TELEMETRY CONSOLE LOGGER TERMINAL & CALIBRATED DIALS (5 COLS) */}
-          <div className="md:col-span-5 space-y-6">
-            
-            {/* CALIBRATED MULTIPURPOSE RADIAL METRICS */}
-            <div className="bg-[#130f30]/80 border border-[#251c5a]/60 rounded-[28px] p-5 shadow-lg space-y-4">
-              <h3 className="text-xs font-black uppercase tracking-wider text-violet-300/70 border-b border-[#251c5a]/40 pb-2 flex items-center justify-between">
-                <span>temperature</span>
-              </h3>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <SensorDial
-                  title="SUHU RUANGAN"
-                  value={temperature}
-                  unit="°C"
-                  status={temperature > 32 ? "Panas ekstrem" : temperature < 20 ? "Dingin" : "Normal"}
-                  statusColor={temperature > 32 ? "rose" : temperature < 20 ? "sky" : "emerald"}
-                  max={50}
-                  icon={Sun}
-                  gradientId="tempProgressGrad"
-                  gradientColors={{ stop1: "#a78bfa", stop2: "#f97316" }}
-                />
-
-                <SensorDial
-                  title="KELEMBABAN UDARA"
-                  value={humidity}
-                  unit="% RH"
-                  status={humidity > 80 ? "Sangat Lembab" : humidity < 40 ? "Kering" : "Ideal"}
-                  statusColor={humidity > 80 ? "blue" : humidity < 40 ? "amber" : "teal"}
-                  max={100}
-                  icon={Droplet}
-                  gradientId="humProgressGrad"
-                  gradientColors={{ stop1: "#a78bfa", stop2: "#a78bfa" }}
-                />
-              </div>
             </div>
 
             {/* TELEMETRY CONSOLE LOGGER TERMINAL */}
