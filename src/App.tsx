@@ -1050,7 +1050,7 @@ export default function App() {
             </div>
             <div>
               <h1 className="text-lg font-bold tracking-tight text-white flex items-center gap-2">
-                Smart Home IoT Hub 
+                EcSmart Home IoT 
                 <span className="text-xs bg-purple-500/10 border border-purple-500/30 text-purple-300 px-2 py-0.5 rounded-full font-mono font-medium">LIVE PREVIEW</span>
               </h1>
               <p className="text-xs text-violet-300/40 mt-0.5">Firebase Realtime Database & Voice Control Workspace</p>
