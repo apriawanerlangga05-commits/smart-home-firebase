@@ -209,7 +209,7 @@ export default function App() {
 
   // --- VOICE ALERTS PROFILE STATES & THRESHOLDS ---
   const [tempAlertEnabled, setTempAlertEnabled] = useState<boolean>(true);
-  const [tempThreshold, setTempThreshold] = useState<number>(32);
+  const [tempThreshold, setTempThreshold] = useState<number>(38);
   const [tempThresholdLow, setTempThresholdLow] = useState<number>(20);
   const [snoozeTempAlert, setSnoozeTempAlert] = useState<boolean>(false);
   const [tempAlertTimeLeft, setTempAlertTimeLeft] = useState<number>(5);
@@ -1203,8 +1203,8 @@ export default function App() {
                   title="SUHU RUANGAN"
                   value={temperature}
                   unit="°C"
-                  status={temperature > 32 ? "Panas ekstrem" : temperature < 20 ? "Dingin" : "Normal"}
-                  statusColor={temperature > 32 ? "rose" : temperature < 20 ? "sky" : "emerald"}
+                  status={temperature > tempThreshold ? "Panas ekstrem" : temperature < tempThresholdLow ? "Dingin" : "Normal"}
+                  statusColor={temperature > tempThreshold ? "rose" : temperature < tempThresholdLow ? "sky" : "emerald"}
                   max={50}
                   icon={Sun}
                   gradientId="tempProgressGrad"
@@ -1295,7 +1295,7 @@ export default function App() {
                 <div className="mb-4">
                   <h4 className="font-bold text-white text-xs tracking-wide uppercase flex items-center gap-1.5 pb-0.5">
                     <Sliders className="w-3.5 h-3.5 text-purple-400" />
-                    Skenario Patroli & Disko
+                    Mode Lampu Kombinasi
                   </h4>
                   <p className="text-[9.5px] text-violet-300/40 leading-relaxed">Uji respon sinkronisasi berulangan cepat otomatis</p>
                 </div>
